@@ -39,6 +39,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 'auto',
     backgroundColor: '#fff',
-  }
-});
+  },
 
+  menu: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 20,
+    backgroundColor: '#000000',
+    width: '100%',
+  },
+
+  boton: {
+    padding: 10,
+  },
+
+  texto: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+
+  contenido: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
