@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+
 import Original from './Original';
 import Lista from './Lista';
 
@@ -14,21 +15,30 @@ export default function App() {
   };
 
   return (
- <View style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="auto" />
-      <Original/>
-      <Lista/>
+      <View style={styles.menu}>
+        
+        <TouchableOpacity onPress={() => setPantalla('original')} style={styles.boton}>
+          <Text style={styles.texto}>Trivia</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setPantalla('lista')} style={styles.boton}>
+          <Text style={styles.texto}>Lista</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.contenido}>
+        {renderPantalla()}
+      </View>
     </View>
-
-
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 'auto',
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  }
 });
+
