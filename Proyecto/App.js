@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useState } from 'react';
 
 import Original from './Original';
@@ -15,15 +15,21 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light" />
+
       <View style={styles.menu}>
-        
-        <TouchableOpacity onPress={() => setPantalla('original')} style={styles.boton}>
+        <TouchableOpacity 
+          onPress={() => setPantalla('original')} 
+          style={styles.boton}
+        >
           <Text style={styles.texto}>Trivia</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setPantalla('lista')} style={styles.boton}>
+        <TouchableOpacity 
+          onPress={() => setPantalla('lista')} 
+          style={styles.boton}
+        >
           <Text style={styles.texto}>Lista</Text>
         </TouchableOpacity>
       </View>
@@ -31,37 +37,34 @@ export default function App() {
       <View style={styles.contenido}>
         {renderPantalla()}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 'auto',
+    flex: 1,
     backgroundColor: '#fff',
   },
 
   menu: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 20,
-    backgroundColor: '#000000',
-    width: '100%',
+    backgroundColor: '#000',
   },
 
   boton: {
-    padding: 10,
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
   },
 
   texto: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 
   contenido: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

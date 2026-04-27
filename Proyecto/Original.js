@@ -1,5 +1,3 @@
-// Nicolás Urrego Giraldo
-
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -7,7 +5,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
+  Dimensions,
 } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 const Original = () => {
   const [countries, setCountries] = useState([]);
@@ -29,11 +31,9 @@ const Original = () => {
         setCountries(filtered);
         generateQuestion(filtered);
         setLoading(false);
-      })
-      .catch((err) => console.error(err));
+      });
   }, []);
 
-  // Temporizador
   useEffect(() => {
     if (gameOver || loading) return;
 
@@ -43,46 +43,36 @@ const Original = () => {
     }
 
     timerRef.current = setTimeout(() => {
-      setTimeLeft(timeLeft - 1);
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearTimeout(timerRef.current);
   }, [timeLeft, gameOver]);
 
   const generateQuestion = (data) => {
-    if (!data || data.length === 0) return;
-
     const randomCountry = data[Math.floor(Math.random() * data.length)];
     const correctAnswer = randomCountry.capital[0];
 
     let wrongAnswers = [];
     while (wrongAnswers.length < 3) {
-      const random =
-        data[Math.floor(Math.random() * data.length)].capital?.[0];
-      if (
-        random &&
-        random !== correctAnswer &&
-        !wrongAnswers.includes(random)
-      ) {
+      const random = data[Math.floor(Math.random() * data.length)].capital?.[0];
+      if (random && random !== correctAnswer && !wrongAnswers.includes(random)) {
         wrongAnswers.push(random);
       }
     }
-
-    const allOptions = shuffle([correctAnswer, ...wrongAnswers]);
 
     setQuestion({
       country: randomCountry.name.common,
       correct: correctAnswer,
     });
-    setOptions(allOptions);
+
+    setOptions([correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5));
     setTimeLeft(10);
   };
 
-  const shuffle = (array) => array.sort(() => Math.random() - 0.5);
-
   const handleAnswer = (option) => {
     if (option === question.correct) {
-      setScore(score + 1);
+      setScore((prev) => prev + 1);
     } else {
       handleWrongAnswer();
       return;
@@ -96,7 +86,6 @@ const Original = () => {
 
     if (newLives <= 0) {
       setGameOver(true);
-      clearTimeout(timerRef.current);
     } else {
       generateQuestion(countries);
     }
@@ -106,35 +95,34 @@ const Original = () => {
     setScore(0);
     setLives(5);
     setGameOver(false);
-    setTimeLeft(10);
     generateQuestion(countries);
   };
 
   if (loading || !question) {
-    return <ActivityIndicator size="large" color="#000" />;
+    return <ActivityIndicator size="large" />;
   }
 
   if (gameOver) {
     return (
-      <View style={styles.container}>
+      <View style={styles.center}>
         <Text style={styles.gameOver}>Game Over</Text>
-        <Text style={styles.score}>Puntaje final: {score}</Text>
+        <Text style={styles.score}>Puntaje: {score}</Text>
 
         <TouchableOpacity style={styles.restartButton} onPress={restartGame}>
-          <Text style={styles.buttonText}>Volver a empezar</Text>
+          <Text style={styles.buttonText}>Reiniciar</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.score}>Puntaje: {score}</Text>
-      <Text style={styles.lives}>❤️ Vidas: {lives}</Text>
-      <Text style={styles.timer}>⏱️ Tiempo: {timeLeft}s</Text>
+      <Text style={styles.lives}>❤️ {lives}</Text>
+      <Text style={styles.timer}>⏱️ {timeLeft}s</Text>
 
       <Text style={styles.question}>
-        ¿Cuál es la capital de {question.country}?
+        ¿Capital de {question.country}?
       </Text>
 
       {options.map((opt, index) => (
@@ -146,7 +134,7 @@ const Original = () => {
           <Text style={styles.buttonText}>{opt}</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -154,55 +142,62 @@ export default Original;
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
+    alignItems: "center",
+  },
+
+  center: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
-    backgroundColor: "#f4f6f7",
+    alignItems: "center",
   },
+
   score: {
-    fontSize: 20,
-    textAlign: "center",
+    fontSize: width * 0.05,
     marginBottom: 10,
   },
+
   lives: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 5,
+    fontSize: width * 0.045,
   },
+
   timer: {
-    fontSize: 18,
+    fontSize: width * 0.045,
+    color: "#e74c3c",
+    marginBottom: 20,
+  },
+
+  question: {
+    fontSize: width * 0.06,
     textAlign: "center",
     marginBottom: 20,
-    color: "#e74c3c",
-  },
-  question: {
-    fontSize: 22,
-    marginBottom: 30,
-    textAlign: "center",
     fontWeight: "bold",
   },
+
   button: {
+    width: "100%",
     backgroundColor: "#3498db",
-    padding: 15,
-    marginVertical: 5,
+    padding: 14,
     borderRadius: 10,
+    marginVertical: 6,
   },
+
   buttonText: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 18,
+    fontSize: width * 0.045,
   },
+
   gameOver: {
-    fontSize: 30,
-    textAlign: "center",
-    marginBottom: 20,
+    fontSize: width * 0.08,
     color: "#e74c3c",
     fontWeight: "bold",
   },
+
   restartButton: {
-    backgroundColor: "#2ecc71",
-    padding: 15,
     marginTop: 20,
+    backgroundColor: "#2ecc71",
+    padding: 14,
     borderRadius: 10,
   },
 });
